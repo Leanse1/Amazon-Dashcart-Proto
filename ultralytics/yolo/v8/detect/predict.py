@@ -20,9 +20,10 @@ data_deque = {}
 deepsort = None
 
 object_counter = {}
-
 object_counter1 = {}
+object_prices = {'car': 20, 'bus': 15, 'truck': 12}
 
+# line = [(650, 0), (650, 720)]
 line = [(100, 500), (1050, 500)]
 
 cwd = getcwd()
@@ -143,6 +144,7 @@ def get_direction(point1, point2):
         direction_str += ""
 
     return direction_str
+
 def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
     cv2.line(img, line[0], line[1], (46,162,112), 3)
     height, width, _ = img.shape
@@ -187,7 +189,11 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
                     object_counter1[obj_name] = 1
                 else:
                     object_counter1[obj_name] += 1
+                    
+        # UI_box(box, img, label, color=color, line_thickness=2)
         UI_box(box, img, label=label, color=color, line_thickness=2)
+        
+        
         # draw trail
         for i in range(1, len(data_deque[id])):
             # check if on buffer value is none
@@ -212,16 +218,64 @@ def draw_boxes(img, bbox, names, object_id, identities=None, offset=(0, 0)):
             cv2.putText(img, f'Numbers of Vehicles Leaving', (11, 35), 0, 1, [225, 255, 255], thickness=2, lineType=cv2.LINE_AA)    
             cv2.line(img, (20,65+ (idx*40)), (127,65+ (idx*40)), [85,45,255], 30)
             cv2.putText(img, cnt_str1, (11, 75+ (idx*40)), 0, 1, [225, 255, 255], thickness=2, lineType=cv2.LINE_AA)
-    
+        total_cost_in = 0   # product returned/ vehicles entered
+    for class_name, count in object_counter1.items():
+      if class_name in object_prices:
+        price = object_prices[class_name]
+        total_cost_in += count * price
+        # print(f"{class_name}: Count={count}, Price={price}, Total Cost={total_cost}")
+
+    total_cost_out = 0     # product added
+    for class_name, count in object_counter.items():
+      if class_name in object_prices:
+        price = object_prices[class_name]
+        total_cost_out += count * price
+        # print(f"{class_name}: Count={count}, Price={price}, Total Cost={total_cost}")
+
+    total_cost_difference = total_cost_in - total_cost_out
+    # print(f"Total Cost In: {total_cost_in}, Total Cost Out: {total_cost_out}, Difference: {total_cost_difference}")
+
+
+    # Display Total Cost Information
+    total_cost_in_text = f"Total Purchased: ${total_cost_in}"
+    total_cost_out_text = f"Total Returned: ${total_cost_out}"
+    total_cost_difference_text = f"Amount to be paid: ${total_cost_difference}"
+
+
+    text_size = cv2.getTextSize(total_cost_in_text, 0, fontScale=1, thickness=2)[0]
+    text_x = (img.shape[1] - text_size[0]) // 2  # Center the text horizontally
+    text_y = img.shape[0] // 2 - text_size[1]  # Adjust the vertical position
+
+    # Add color (e.g., red)
+    cv2.line(img, (435, 325), (880, 325), [85, 45, 255], 30)
+    cv2.putText(img, total_cost_in_text, (text_x, text_y), 0, 1, [255, 255, 255], thickness=2, lineType=cv2.LINE_AA)
+
+    # Move down for the next line
+    text_y += text_size[1] + 10
+
+    # Display Total Returned
+    cv2.line(img, (435, 358), (880, 358), [85, 45, 255], 30)
+    text_size = cv2.getTextSize(total_cost_out_text, 0, fontScale=1, thickness=2)[0]
+    cv2.putText(img, total_cost_out_text, (text_x, text_y), 0, 1, [255, 255, 255], thickness=2, lineType=cv2.LINE_AA)
+
+    # Move down for the next line
+    text_y += text_size[1] + 10
+
+    # Display Amount to be paid
+    cv2.line(img, (435, 390), (880, 390), [85, 45, 255], 30)
+    text_size = cv2.getTextSize(total_cost_difference_text, 0, fontScale=1, thickness=2)[0]
+    cv2.putText(img, total_cost_difference_text, (text_x, text_y), 0, 1, [255, 255, 255], thickness=2, lineType=cv2.LINE_AA)
+
     config.OBJECT_COUNTER = object_counter
     config.OBJECT_COUNTER1 = object_counter1
-
+    config.OBJECT_PRICES = object_prices
     return img
 
 class DetectionPredictor(BasePredictor):
 
     def get_annotator(self, img):
         return Annotator(img, line_width=self.args.line_width, example=str(self.model.names))
+
 
     def postprocess(self, preds, img, orig_img):
         preds = ops.non_max_suppression(preds,
@@ -310,7 +364,7 @@ class DetectionPredictor(BasePredictor):
 
 def predict(cfg=DEFAULT_CFG, use_python=False):
     """Runs YOLO model inference on input image(s)."""
-    model = cfg.model or 'yolov8n.pt'
+    model = cfg.model or 'yolov8n.pt' or 'yolov8l.pt' or 'best.pt'
     source = cfg.source if cfg.source is not None else ROOT / 'assets' if (ROOT / 'assets').exists() \
         else 'https://ultralytics.com/images/bus.jpg'
 
