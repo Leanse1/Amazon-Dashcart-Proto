@@ -1,32 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
--------------------------------------------------
-   @File Name:     app.py
-   @Author:        Luyao.zhang
-   @Date:          2023/5/15
-   @Description:
--------------------------------------------------
-"""
 from pathlib import Path
 import streamlit as st
-
 import config
-from utils import load_model, infer_uploaded_image, infer_uploaded_video, infer_uploaded_webcam
+from utils import load_model, infer_uploaded_video, infer_uploaded_webcam
 
-# setting page layout
 st.set_page_config(
-    page_title="Interactive Interface for YOLOv8",
+    page_title="Amazon Dash cart Prototype",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded"
     )
 
 # main page heading
-st.title("Interactive Interface for YOLOv8")
+st.title("Amazon Dash cart Prototype")
 
 # sidebar
-st.sidebar.header("DL Model Config")
+st.sidebar.header("Settings")
 
 # model options
 task_type = st.sidebar.selectbox(
@@ -66,11 +54,9 @@ source_selectbox = st.sidebar.selectbox(
 )
 
 source_img = None
-if source_selectbox == config.SOURCES_LIST[0]: # Image
-    infer_uploaded_image(confidence, model)
-elif source_selectbox == config.SOURCES_LIST[1]: # Video
+if source_selectbox == config.SOURCES_LIST[1]: # Video
     infer_uploaded_video(confidence, model)
 elif source_selectbox == config.SOURCES_LIST[2]: # Webcam
     infer_uploaded_webcam(confidence, model)
 else:
-    st.error("Currently only 'Image' and 'Video' source are implemented")
+    st.error("Currently only 'Webcam' and 'Video' source are implemented")
