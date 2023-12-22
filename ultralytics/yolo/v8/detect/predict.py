@@ -1,5 +1,3 @@
-# Ultralytics YOLO 🚀, GPL-3.0 license
-
 import torch
 import cv2
 import torch
