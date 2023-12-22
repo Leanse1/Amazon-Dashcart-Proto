@@ -33,10 +33,13 @@ def _display_detected_frames(conf, model, st_count, st_frame, image):
             if config.OBJECT_PRICES != None and key in config.OBJECT_PRICES:
                 price = config.OBJECT_PRICES[key]
                 total_cost_in += value * price
+                
+    st_count.write(
+    f'{inText}\n\n{outText}\n\nTotal Cost In: {total_cost_in}\nTotal Cost Out: {total_cost_out}\nTotal Difference: {total_cost_in - total_cost_out}')            
 
-    st_count.markdown(
-    f'<div style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">{inText}<br>{outText}<br><br>Total Cost Added: ₹ {total_cost_in}<br>Total Cost Returned: ₹ {total_cost_out}<br><br>Final amount to be paid: ₹ {total_cost_in - total_cost_out}</div>',
-    unsafe_allow_html=True)
+    # st_count.markdown(
+    # f'<div style="font-family: Arial, sans-serif; font-size: 16px; color: #333;">{inText}<br>{outText}<br><br>Total Cost Added: ₹ {total_cost_in}<br>Total Cost Returned: ₹ {total_cost_out}<br><br>Final amount to be paid: ₹ {total_cost_in - total_cost_out}</div>',
+    # unsafe_allow_html=True)
 
     res_plotted = res[0].plot()
     st_frame.image(res_plotted,
