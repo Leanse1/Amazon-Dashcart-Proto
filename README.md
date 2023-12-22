@@ -1,5 +1,5 @@
 ## Introduction
-This repository supply a user-friendly interactive interface for [YOLOv8](https://github.com/ultralytics/ultralytics) with Object Tracking and Counting capability. The interface is powered by [Streamlit](https://github.com/streamlit/streamlit).
+This repository is a mimic of Amazon Dash cart which can track and estimate price on its flow
 
 ## Features
 - Feature1: Object detection task.
