@@ -1,5 +1,6 @@
 ## Introduction
-This repository is a mimic of Amazon Dash cart which can track and estimate price on its flow
+This repository is a mimic of Amazon Dash cart which can track and estimate price on its flow.
+
 I am still working on it for enhancements
 
 ## Features
